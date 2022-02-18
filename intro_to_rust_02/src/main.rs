@@ -1,5 +1,7 @@
 use std::env;
 fn main() {
     let mut arguments = env::args().skip(1);
-    let key = &arguments.next();
+    let key = arguments.next().unwrap();
+    let value = arguments.next().unwrap();
+    println!("the key is : {} and the value is {}", key, value);
 }
