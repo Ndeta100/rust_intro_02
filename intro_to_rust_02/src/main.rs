@@ -1,5 +1,6 @@
 use std::env;
 use std::fs;
+
 fn main() {
     let mut arguments = env::args().skip(1);
     let key = arguments.next().unwrap();
@@ -8,5 +9,7 @@ fn main() {
 
     // Writing to a file
     let contents = format!("{}\t{}\n", &key, &value);
-    fs::write("kv.db", contents);
+    fs::write("kv.db", contents).unwrap();
 }
+struct Database {}
+impl Database {}
