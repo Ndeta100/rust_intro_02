@@ -19,22 +19,23 @@ struct Database {
 }
 impl Database {
     fn new() -> Result<Database, io::Error> {
+        let mut map: HashMap<&str, &str> = HashMap::new();
         //read the kv.db file
-        let contents = match fs::read_to_string("kv.db") {
-            Ok(c) => c,
-            Err(error) => {
-                return Err(error);
-            }
-        };
+        // let contents = match fs::read_to_string("kv.db") {
+        //     Ok(c) => c,
+        //     Err(error) => {
+        //         return Err(error);
+        //     }
+        // };
+        let contents = fs::read_to_string("kv.db")?;
         for line in contents.lines() {
             let mut chunks = line.splitn(2, '\t');
             let key = chunks.next().expect("No key");
             let value = chunks.next().expect("No value");
+            map.insert(key, value);
         }
         //parse string
         //populate map
-        Ok(Database {
-            map: HashMap::new(),
-        })
+        Ok(Database { map: map })
     }
 }
