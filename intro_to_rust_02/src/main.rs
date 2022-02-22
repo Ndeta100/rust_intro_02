@@ -36,6 +36,6 @@ impl Database {
         }
         //parse string
         //populate map
-        Ok(Database { map: map })
+        Ok(Database { map })
     }
 }
