@@ -11,10 +11,15 @@ fn main() {
     let mut database = Database::new().expect("Database new crashed ");
     database.insert(key.to_uppercase(), value.clone());
     database.insert(key, value);
-    database.flush().unwrap();
+    match database.flush() {
+        Ok(()) => print!("yay"),
+        Err(err) => print!("Oh no  Error {}", err),
+    }
 }
+
 struct Database {
     map: HashMap<String, String>,
+    flush: bool,
 }
 impl Database {
     fn new() -> Result<Database, io::Error> {
@@ -35,19 +40,33 @@ impl Database {
         }
         //parse string
         //populate map
-        Ok(Database { map })
+        Ok(Database { map, flush: false })
     }
     fn insert(&mut self, key: String, value: String) {
         self.map.insert(key, value);
     }
 
     // creating a flush function
-    fn flush(self) -> io::Result<()> {
-        let mut contents = String::new();
-        for (key, value) in &self.map {
-            let kvpair = format!("{}\t{}\n", key, value);
-            contents.push_str(&kvpair);
-        }
-        fs::write("kv.db", contents)
+    fn flush(&mut self) -> io::Result<()> {
+        self.flush = true;
+        do_flush(&self)
     }
+}
+impl Drop for Database {
+    fn drop(&mut self) {
+        if !self.flush {
+            let _ = do_flush(self);
+        }
+    }
+}
+
+fn do_flush(database: &Database) -> io::Result<()> {
+    let mut contents = String::new();
+    for (key, value) in &database.map {
+        contents.push_str(key);
+        contents.push('\t');
+        contents.push_str(value);
+        contents.push('\n');
+    }
+    fs::write("kv.db", contents)
 }

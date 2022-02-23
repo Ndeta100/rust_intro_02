@@ -1,5 +1,7 @@
+hello	world
+key	value
+old	nnew
 NEWKEY	newvalue
 newkey	newvalue
-hello	world
+OLD	nnew
 KEY	value
-key	value
