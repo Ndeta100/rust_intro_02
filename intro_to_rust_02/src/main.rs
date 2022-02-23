@@ -11,8 +11,10 @@ fn main() {
 
     // Writing to a file
     let contents = format!("{}\t{}\n", &key, &value);
-    fs::write("kv.db", contents).unwrap();
-    let database = Database::new().expect("Database new crashed ");
+
+    let mut database = Database::new().expect("Database new crashed ");
+    database.insert(key.to_uppercase(), value);
+    database.insert(key, value);
 }
 struct Database {
     map: HashMap<String, String>,
@@ -37,5 +39,8 @@ impl Database {
         //parse string
         //populate map
         Ok(Database { map })
+    }
+    fn insert(&mut self, key: String, value: String) {
+        self.map.insert(key, value);
     }
 }
