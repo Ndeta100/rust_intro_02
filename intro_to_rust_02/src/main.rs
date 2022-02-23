@@ -8,13 +8,10 @@ fn main() {
     let key = arguments.next().unwrap();
     let value = arguments.next().unwrap();
     println!("the key is : {} and the value is {}", key, value);
-
-    // Writing to a file
-    let contents = format!("{}\t{}\n", &key, &value);
-
     let mut database = Database::new().expect("Database new crashed ");
-    database.insert(key.to_uppercase(), value);
+    database.insert(key.to_uppercase(), value.clone());
     database.insert(key, value);
+    database.flush().unwrap();
 }
 struct Database {
     map: HashMap<String, String>,
@@ -42,5 +39,15 @@ impl Database {
     }
     fn insert(&mut self, key: String, value: String) {
         self.map.insert(key, value);
+    }
+
+    // creating a flush function
+    fn flush(self) -> io::Result<()> {
+        let mut contents = String::new();
+        for (key, value) in &self.map {
+            let kvpair = format!("{}\t{}\n", key, value);
+            contents.push_str(&kvpair);
+        }
+        fs::write("kv.db", contents)
     }
 }
